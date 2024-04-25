@@ -1,3 +1,4 @@
+package src;
 import javafx.application.*;
 import javafx.stage.*;
 import javafx.collections.*;
@@ -469,7 +470,7 @@ public class GTKWave extends Application {
     private void initializeData() {
         signalList = new ArrayList<>();
         // Construct path to CSV file
-        String csvFile = "src/output.csv";
+        String csvFile = "output.csv";
         String line;
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
