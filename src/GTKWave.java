@@ -13,22 +13,29 @@ import javafx.scene.text.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
+/*
+GTKWave visualizes waveforms represented in a CSV file format.
+It allows users to view signals and their dependencies, move forward and backward through the timeline, and manipulate signal data.
+*/
 
 
 public class GTKWave extends Application {
 
-    private ArrayList<Signal> signalList;
-    private ListView<String> signalListView;
-    private FlowPane wavePane;
-    private int start = 0;
-    private int cellHeight = 30;
-    private int WIDTH_NUMBER = 12;
-    private int MENU_WIDTH = 200;
-    private int TIME_WIDTH = 0;
-    private Line currentVerticalLine = null;
-    private int TIME_STEP = 500;
-    private HashMap<String, String[]> ALL_SIGNALS = new HashMap<>();
-    private BorderPane rootLayout = null;
+    // Data members
+    private ArrayList<Signal> signalList; // List of signals
+    private ListView<String> signalListView; // ListView for signal names
+    private FlowPane wavePane; // Pane for displaying waveforms
+    private int start = 0; // Start index of the displayed waveform
+    private int cellHeight = 30; // Height of each cell in the waveform
+    private int WIDTH_NUMBER = 12; // Length of time represented at once on the screen
+    private int MENU_WIDTH = 300; // Width of the menu pane
+    private int TIME_WIDTH = 0; // Width of the time multiplier
+    private Line currentVerticalLine = null; // Vertical line for indicating time
+    private int TIME_STEP = 500; // Time step for the scale
+    private HashMap<String, String[]> ALL_SIGNALS = new HashMap<>(); // Map for all signal data
+    private BorderPane rootLayout = null; // Root layout for the scene
 
     @Override
     public void start(Stage primaryStage) {
@@ -50,8 +57,7 @@ public class GTKWave extends Application {
 
                 if (selectedIndex > 0) {
                     String selectedItem = signalListView.getItems().get(selectedIndex);
-                        // You can change the item here, for example:
-                        // split the signal into multiple signals
+                    // split the signal into multiple signals
                     Signal multidata = Signal.signalMap.get(selectedItem);
                     if (multidata.singleBit) return;
 
@@ -90,6 +96,7 @@ public class GTKWave extends Application {
             signalListView.setPrefWidth(MENU_WIDTH);
         });
 
+        // set style
         signalListView.setCellFactory(listView -> {
             ListCell<String> cell = new ListCell<String>() {
                 @Override
@@ -109,10 +116,11 @@ public class GTKWave extends Application {
                 }
             };
             // Set preferred height for each cell
-            cell.setPrefHeight(cellHeight); // Example height of 30 pixels
+            cell.setPrefHeight(cellHeight);
             return cell;
         });
 
+        // CONTEXT MENU
         ContextMenu contextMenu = new ContextMenu();
         MenuItem deleteItem = new MenuItem("Delete");
         deleteItem.setOnAction(e -> {
@@ -124,24 +132,45 @@ public class GTKWave extends Application {
                 generateWaves();
             }
         });
+        MenuItem showDependencies = new MenuItem("Show Dependencies");
+        showDependencies.setOnAction(e -> {
+            String selectedItem = signalListView.getSelectionModel().getSelectedItem();
+            int selectedIndex = signalListView.getSelectionModel().getSelectedIndex();
+            if (selectedItem != null) {
+                // System.out.println("Dependencies of " + selectedItem);
+                // display dependencies
+                signalListView.getItems().addAll(Arrays.stream(depends.get(selectedItem))
+                                      .map(item -> item)
+                                      .collect(Collectors.toList()));
+                ArrayList<Signal> newSignals_ = new ArrayList<>();
+                for (String dep : depends.get(selectedItem)) {
+                    Signal signal = new Signal(dep, ALL_SIGNALS.get(dep));
+                    signal.fake = true;
+                    newSignals_.add(signal);
+                }
+                signalList.addAll(selectedIndex, newSignals_);
+                generateWaves(); 
+            }
+        });
         contextMenu.getItems().add(deleteItem);
+        contextMenu.getItems().add(showDependencies);
 
         signalListView.setOnContextMenuRequested(e -> {
             contextMenu.show(signalListView, e.getScreenX(), e.getScreenY());
         });
         signalListView.setCellFactory(param -> new DragAndDropListCell());
 
-        // WAVE PANE
+
+        // WAVE PANE - display waveforms
         wavePane = new FlowPane();
         wavePane.setStyle("-fx-background-color: lightgrey;");
         HBox.setHgrow(wavePane, Priority.ALWAYS); 
         generateWaves();
 
-        // Create the root layout (HBox) and add the sections
-        // HBox mainLayout = new HBox(signalListView, stackPane);
+        // box that holds the signals and wave forms
         HBox mainLayout = new HBox(signalListView, wavePane);
 
-        // TOP PANE
+        // TOP PANE - holds the menu bar and buttons
         HBox topPane = new HBox(10); // Add 10 pixels spacing between children
         topPane.setStyle("-fx-padding: 5; -fx-alignment: center-left;");
     
@@ -149,13 +178,9 @@ public class GTKWave extends Application {
         MenuBar menuBar = createMenuBar(primaryStage);
         menuBar.setPrefWidth(MENU_WIDTH - 10); // Set preferred width of the menu bar to 200
     
-        // FORWARD
         Button forwardButton = new Button("Forward");
         forwardButton.setOnAction(e -> {
-            // Define the action for the FORWARD button here
-            // System.out.println("FORWARD button clicked");
-            if (start + WIDTH_NUMBER >= TIME_WIDTH) return;
-            
+            if (start + WIDTH_NUMBER >= TIME_WIDTH) return;            
             start += WIDTH_NUMBER/2;
             generateWaves();
             rootLayout.getChildren().remove(currentVerticalLine);
@@ -164,18 +189,17 @@ public class GTKWave extends Application {
 
         Button backwardButton = new Button("Backward");
         backwardButton.setOnAction(e -> {
-            // Define the action for the FORWARD button here
-            // System.out.println("FORWARD button clicked");
             if (start - WIDTH_NUMBER/2 < 0) return;
             start -= WIDTH_NUMBER/2;
             generateWaves();    
             rootLayout.getChildren().remove(currentVerticalLine);
-    
         });
     
+        // text field for adding signals
         TextField textField = new TextField();
         textField.setOnAction(e -> {
             String inputText = textField.getText();
+            if (inputText.isEmpty()) return;
             System.out.println("Entered: " + inputText);
             addSignal(inputText);
             textField.clear();
@@ -188,9 +212,9 @@ public class GTKWave extends Application {
         // Create the root layout (BorderPane) and set the top as the MenuBar
         rootLayout = new BorderPane();
         rootLayout.setTop(topPane);
-        // rootLayout.setTop(createMenuBar(primaryStage));
         rootLayout.setCenter(mainLayout);
-        // VERTICAL LINE
+
+        // displays VERTICAL LINE to show exact moment in time
         wavePane.setOnMouseClicked(event -> {
             // Get the x coordinate of the click event
             double x = event.getX();
@@ -203,14 +227,14 @@ public class GTKWave extends Application {
 
             // Create a vertical line at the x coordinate
             Line verticalLine = new Line(x+MENU_WIDTH, 0, x+MENU_WIDTH, wavePane.getHeight());
-            verticalLine.setStroke(Color.BLACK); // Set the line color (e.g., red)
-            verticalLine.setStrokeWidth(0.5); // Set the line width (e.g., 1)
+            verticalLine.setStroke(Color.BLACK);
+            verticalLine.setStrokeWidth(0.5);
             
             // Add the vertical line to the wavePane
             rootLayout.getChildren().add(verticalLine);
             currentVerticalLine = verticalLine;
 
-            
+            // update signal text to display signal data at that time
             signalListView.setCellFactory(listView -> {
                 ListCell<String> cell = new ListCell<String>() {
                     @Override
@@ -235,13 +259,13 @@ public class GTKWave extends Application {
                         
                                 dataVal = Integer.toHexString(binDataVal);
                                 setText(item + ": \t" + (numCell+start >= TIME_WIDTH ? "x" : dataVal));
-                                setStyle(null); // Reset style for other items
+                                setStyle(null);
                             }
                         }
                     }
                 };
-                // Set preferred height for each cell
-                cell.setPrefHeight(cellHeight); // Example height of 30 pixels
+                
+                cell.setPrefHeight(cellHeight);
                 return cell;
             });
 
@@ -254,12 +278,12 @@ public class GTKWave extends Application {
         primaryStage.show();
     }
 
-
+    // visually draw each of the waves
     private void generateWaves() {
         // Clear the wavePane before adding new waves
         wavePane.getChildren().clear();
-        // Add waves to the FlowPane
         
+        // display scale at the top showing the time 
         Platform.runLater(() -> {
             Pane scale = generateScale(wavePane.getWidth());
             wavePane.getChildren().add(scale);
@@ -269,12 +293,13 @@ public class GTKWave extends Application {
         for (Signal signal : signalList) {
             String[] data = signal.data;
             Platform.runLater(() -> {
-                Pane wave = createWavePane(data, wavePane.getWidth(), signal.singleBit);
+                Pane wave = createWavePane(data, wavePane.getWidth(), signal.singleBit, circulars.contains(signal.name));
                 wavePane.getChildren().add(wave);
             });
         }
     }
 
+    // displays scale at the top of the wave pane
     private Pane generateScale(double paneWidth) {
         Pane pane = new Pane();
         pane.setPrefHeight(cellHeight);
@@ -293,18 +318,22 @@ public class GTKWave extends Application {
         return pane;
     }
 
-    private Pane createWavePane(String[] data, double paneWidth, boolean singleBit) {
+    // draws one wave
+    private Pane createWavePane(String[] data, double paneWidth, boolean singleBit, boolean isCircular) {
         Pane wp = new Pane();
         
         wp.setPrefHeight(cellHeight);
+
+        Color waveColor = isCircular ? Color.PAPAYAWHIP: Color.RED;
         
         for (int i = 0; i < WIDTH_NUMBER; i++) {
+            // draws a rectangle if the data is undefined
             if ( i +start >= TIME_WIDTH || data[i + start].contains("x")) {
-                // Rectangle rect = new Rectangle(i * paneWidth/WIDTH_NUMBER, 0, paneWidth/WIDTH_NUMBER, cellHeight);
                 Rectangle rect = new Rectangle(i * paneWidth/WIDTH_NUMBER, 2, paneWidth/WIDTH_NUMBER, cellHeight-4);
-                rect.setFill(Color.RED);
+                rect.setFill(waveColor);
                 wp.getChildren().add(rect);
             }
+            // draws each of the signal lines throughout time if single bit, otherwise displays the data number in hex
             else {
                 Line line = new Line(i * paneWidth/WIDTH_NUMBER, (1-1)*(cellHeight)+4, (i + 1) * paneWidth/WIDTH_NUMBER, (1-1)*(cellHeight)+4); // Draw line between points
                 line.setStroke(Color.BLUE);
@@ -331,6 +360,7 @@ public class GTKWave extends Application {
                 }
             }
         }
+        // connects the signal lines
         for (int i = 0; i < WIDTH_NUMBER-1; i++) {
             if (i + start >= TIME_WIDTH || i + 1 + start >= TIME_WIDTH || data[i + start].contains("x") || data[i + 1 + start].contains("x")) {
                 continue;
@@ -342,12 +372,13 @@ public class GTKWave extends Application {
         }
         Line greenLine = new Line(0, cellHeight, paneWidth, cellHeight);
         greenLine.setStroke(Color.GREEN);
-        greenLine.setStrokeWidth(0.1); // Set stroke width to 1 pixel for a thin line
+        greenLine.setStrokeWidth(0.1);
         wp.getChildren().add(greenLine);
         return wp;
     }
 
     private void saveState(Stage primaryStage) {
+        // opens file explorer allowing user to save the current state
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save File");
 
@@ -364,9 +395,12 @@ public class GTKWave extends Application {
         if (file != null) {
             saveToFile(file);
         }
+
+        
     }
 
     private void saveToFile(File file) {
+        // writes each signal to a file
         try (FileWriter writer = new FileWriter(file)) {
             for (Signal sig : signalList) {
                 writer.write(sig.name + "\n");
@@ -378,6 +412,7 @@ public class GTKWave extends Application {
     }
 
     private void openState(Stage primaryStage) {
+        // opens a file and reads the state from the file from a previous saveState
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open File");
     
@@ -399,6 +434,7 @@ public class GTKWave extends Application {
     }
 
     private void readFromFile(File file) {
+        // read signals from a csv file and display them on the screen
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             signalList.clear();
@@ -419,6 +455,7 @@ public class GTKWave extends Application {
         }
     }
 
+    // adds menubar 
     private MenuBar createMenuBar(Stage primaryStage) {
         // Create the MenuBar
         MenuBar menuBar = new MenuBar();
@@ -440,22 +477,13 @@ public class GTKWave extends Application {
         Menu helpMenu = new Menu("Help");
         MenuItem aboutItem = new MenuItem("About");
         helpMenu.getItems().addAll(aboutItem);
-    
-    
-        // // Create a CustomMenuItem to hold the button
-        // CustomMenuItem buttonMenuItem = new CustomMenuItem(forwardButton);
-        // buttonMenuItem.setHideOnClick(false); // Prevent the menu from closing when clicking the button
-    
-        // // Create an empty menu to hold the CustomMenuItem (acting as a placeholder)
-        // Menu buttonMenu = new Menu();
-        // buttonMenu.getItems().add(buttonMenuItem);
-    
-        // Add menus and the buttonMenu to the MenuBar
+
         menuBar.getMenus().addAll(fileMenu, helpMenu);
     
         return menuBar;
     }
 
+    // adds signal to the signal list and other variables while updating wavepane
     private void addSignal(String sigName) {
         // Add the signal to the signal list
         if (!ALL_SIGNALS.containsKey(sigName)) return;
@@ -467,6 +495,7 @@ public class GTKWave extends Application {
         generateWaves();
     }
 
+    // reads dependencies and signal data from files
     private void initializeData() {
         signalList = new ArrayList<>();
         // Construct path to CSV file
@@ -489,8 +518,41 @@ public class GTKWave extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        boolean circular = false;
+        String dependFile = "dependencies.txt";
+        try (BufferedReader br = new BufferedReader(new FileReader(dependFile))) {
+            while ((line = br.readLine()) != null) {
+                if (line.equals("CIRCULAR DEPENDENCY")) {
+                    circular = true;
+                    continue;
+                } 
+                if (!circular) {
+                    
+                    String[] values = line.split(":");
+                    String wire = values[0];
+                    String[] deps = values[1].substring(1).split(" ");
+                    if (wire.equals("VARIABLE NAME")) continue;
+                    depends.put(wire, deps);
+                }
+                else {
+                    String[] values = line.split(" ");
+                    for (String value : values) {
+                        circulars.add(value);
+                    
+                    }
+                    // circulars.addAll(values);   
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("done!");
     }
 
+    private HashMap<String, String[]> depends = new HashMap<>();
+    private HashSet<String> circulars = new HashSet<>();
+
+    // takes a single column of data from a multibit signal
     private String[] arraySplicer(String[] arr, int index) {
         String[] narr = new String[arr.length];
         for (int i = 0; i < arr.length; i++) {
@@ -499,6 +561,7 @@ public class GTKWave extends Application {
         return narr;
     }
 
+    // finds the longest length of data in a signal
     private int findDataTimeLength(String[] arr) {
         int len = 0;
         for (String item : arr) {
@@ -508,11 +571,15 @@ public class GTKWave extends Application {
         return len;
     }
 
+    // Signal class to represent each signal
     private class Signal {
         private String name;
         private String[] data;
         private boolean singleBit;
+        // determines if the signal was created from expanding a multibit signal
         private boolean fake;
+
+        // holds all signals and their names
         private static ArrayList<String> names = new ArrayList<>();
         private static HashMap<String, Signal> signalMap = new HashMap<>();
 
@@ -526,6 +593,8 @@ public class GTKWave extends Application {
         }
     }
 
+
+    // implements drag and drop functionality for the list view
     private static class DragAndDropListCell extends ListCell<String> {
         public DragAndDropListCell() {
             setOnDragDetected(event -> {
@@ -585,10 +654,3 @@ public class GTKWave extends Application {
         launch(args);
     }
 }
-
-/*
- * TODO
- * 1. make sure sizes line up when loading file
- * 2. add naming to add signal
- * 3. fix drag and drop
- */
