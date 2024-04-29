@@ -11,13 +11,22 @@ GTKWave-Plus allows users to detect circular and linear dependencies while visua
 
 ## Getting Started
 
-1. **Prerequisites**: Make sure you have Java installed on your system.
+1. **Prerequisites**: Make sure you have Java and Python installed on your system.
    
 2. **Clone the Repository**: Clone this repository to your local machine using the following command:
     ```
     git clone <repository_url>
     ```
+3. **Install Required Python Libraries:**
+    ```
+    pip install -r requirements.txt
+    ```
 
-3. **Add jar libraries in lib folder to project classpath**: Go to Referenced Libraries, under Java Projects in the Explorer pane and click the "+" button to add add jar libraries to the project classpath. Select all of the files inside the lib folder.
+4. **Add jar libraries in lib folder to project classpath**: Go to Referenced Libraries, under Java Projects in the Explorer pane and click the "+" button to add add jar libraries to the project classpath. Select all of the files inside the lib folder.
 
-5. **Run**: Run the launch configuration in the .vscode folder!
+5. **Process VCD File:** Process the VCD file using the following command
+    ``` 
+    python3 process_vcd.py <vcd_file>
+    ```
+
+6. **Run**: Run the launch configuration in the .vscode folder!
