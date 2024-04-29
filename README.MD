@@ -18,17 +18,6 @@ GTKWave-Plus allows users to detect circular and linear dependencies while visua
     git clone <repository_url>
     ```
 
-3. **Set your launch.json**: Create a launch.json file under the ".vscode" folder and add the following run configuration:
-    ```
-    {
-            "type": "java",
-            "name": "Launch App",
-            "request": "launch",
-            "mainClass": "${file}",
-            "vmArgs": "--module-path ${workspaceFolder}/lib --add-modules javafx.controls,javafx.fxml"
-    }   
-    ```
+3. **Add jar libraries in lib folder to project classpath**: Go to Referenced Libraries, under Java Projects in the Explorer pane and click the "+" button to add add jar libraries to the project classpath. Select all of the files inside the lib folder.
 
-4. **Add lib folder to referenced libraries**: Go to Referenced Libraries, under Java Projects in the Explorer pane and click the "+" button to add add jar libraries to the project classpath. Select all of the files inside the lib folder.
-
-5. **Run**: Run the launch configuration from above!
+5. **Run**: Run the launch configuration in the .vscode folder!
