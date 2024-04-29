@@ -1,6 +1,6 @@
 # GTKWave
 
-GTKWave is a JavaFX application designed to visualize waveforms represented in a CSV file format. It provides a user-friendly interface for viewing signals and their dependencies, zooming in and out on the timeline, and manipulating signal data.
+GTKWave is a JavaFX application designed to visualize waveforms represented in a CSV file format. It provides a user-friendly interface for viewing signals and their dependencies, zooming in and out on the timeline, and manipulating signal data. Users can detect circular dependencies as well as analyzing how signals affect other signals.
 
 ## Features
 
@@ -19,14 +19,20 @@ GTKWave is a JavaFX application designed to visualize waveforms represented in a
     git clone <repository_url>
     ```
 
-3. **Run the Application**: Navigate to the project directory and run the application using:
+3. **Set your launch.json**: Create a launch.json file under the ".vscode" folder and add the following run configuration:
     ```
-    java -jar GTKWave.jar
+    {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "${file}",
+            "vmArgs": "--module-path ${workspaceFolder}/lib --add-modules javafx.controls,javafx.fxml"
+    }   
     ```
 
-4. **Load Data**: Load your waveform data by opening a CSV file from the application menu.
+4. **Add lib folder to referenced libraries**: Go to Referenced Libraries, under Java Projects in the Explorer pane and click the "+" button to add add jar libraries to the project classpath. Select all of the files inside the lib folder.
 
-5. **Explore and Manipulate**: Explore the waveforms, manipulate signals, and save your changes.
+5. **Run**: Run the launch configuration from above!
 
 ## Usage
 
