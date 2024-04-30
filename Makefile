@@ -15,12 +15,12 @@ C_O_FILES=${addprefix $B/,${subst .c,.o,${C_FILES}}}
 LINK=${firstword ${patsubst %.cxx,${CXX},${CXX_FILES} ${patsubst %.c,${CC},${C_FILES}}}}
 LINK_FLAGS=
 
-FUN_FILES=${wildcard *.fun}
-TESTS=${subst .fun,.test,${FUN_FILES}}
-OK_FILES=${subst .fun,.ok,${FUN_FILES}}
-OUT_FILES=${subst .fun,.out,${FUN_FILES}}
-DIFF_FILES=${subst .fun,.diff,${FUN_FILES}}
-RESULT_FILES=${subst .fun,.result,${FUN_FILES}}
+FUN_FILES=${wildcard *.main}
+TESTS=${subst .main,.test,${FUN_FILES}}
+OK_FILES=${subst .main,.ok,${FUN_FILES}}
+OUT_FILES=${subst .main,.dep,${FUN_FILES}}
+DIFF_FILES=${subst .main,.diff,${FUN_FILES}}
+RESULT_FILES=${subst .main,.result,${FUN_FILES}}
 
 all : $B/main
 
@@ -46,16 +46,16 @@ ${RESULT_FILES}: %.result : Makefile %.diff
 	((test -s $*.diff && echo "fail") || echo "pass") > $@
 
 
-${DIFF_FILES}: %.diff : Makefile %.out %.ok
+${DIFF_FILES}: %.diff : Makefile %.dep %.ok
 	@echo "no diff" > $@
-	-diff $*.out $*.ok > $@ 2>&1
+	-diff $*.dep $*.ok > $@ 2>&1
 
-${OUT_FILES}: %.out : Makefile $B/main %.fun
+${OUT_FILES}: %.dep : Makefile $B/main %.main
 	@echo "failed to run" > $@
-	-time --quiet -f '%e' -o $*.time timeout 10 $B/main $*.fun > $@
+	-time --quiet -f '%e' -o $*.time timeout 10 $B/main $*.main > $@
 
 -include $B/*.d
 
 clean:
 	rm -rf build
-	rm -f *.diff *.result *.out *.time
+	rm -f *.diff *.result *.dep *.time

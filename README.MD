@@ -24,12 +24,17 @@ GTKWave-Plus allows users to detect circular and linear dependencies while visua
 
 4. **Add jar libraries in lib folder to project classpath**: Go to Referenced Libraries, under Java Projects in the Explorer pane and click the "+" button to add add jar libraries to the project classpath. Select all of the files inside the lib folder.
 
-5. **Process VCD File:** Process the VCD file using the following command
+5. **Adding .vcd file**: Add your .vcd file to the directory.
+
+6. **Adding main module**: Add the main module code to a file named test.main
+
+6. **Dependency Tree**: make test creates the dependency tree and outputs circular dependencies to the test.txt file.
+
+7. **Process VCD File:** Process the VCD file using the following command
     ``` 
     python3 process_vcd.py <vcd_file>
     ```
-
-6. **Run**: Run the launch configuration in the .vscode folder!
+8. **Run**: Run the launch configuration in the .vscode folder!
 
 
 ## Demo

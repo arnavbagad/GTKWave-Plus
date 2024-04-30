@@ -1,5 +1,4 @@
 `timescale 1ps/1ps
-
 module main();
 
     initial begin
@@ -389,11 +388,24 @@ module main();
         (w_mem_en_exec2 && wb_0 && !halt), va_exec2[15:1], mis_st_val_or_norm);
 
 
+    /************
+     * Register *
+     ************/
+    
+    regs regs(clk, ra, va, read_addr_2, read_data_2, 
+        (w_reg_en_exec2 && wb_0 && !halt), rt_exec2, res_wb);
 
     /******
      * BP *
      ******/
     wire [15:0] bp_out;
     bp bp(clk, pc, bp_out, is_jump_exec2 && wb_0, pc_wb, vb_or_vt_exec2);
+
+    wire a = 2;
+    wire b = 1;
+    wire x = y + b;
+    wire y = x + a;
+    wire z;
+    assign z = a + x + y + b;
 
 endmodule

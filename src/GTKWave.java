@@ -519,7 +519,7 @@ public class GTKWave extends Application {
             e.printStackTrace();
         }
         boolean circular = false;
-        String dependFile = "dependencies.txt";
+        String dependFile = "test.dep";
         try (BufferedReader br = new BufferedReader(new FileReader(dependFile))) {
             while ((line = br.readLine()) != null) {
                 if (line.equals("CIRCULAR DEPENDENCY")) {

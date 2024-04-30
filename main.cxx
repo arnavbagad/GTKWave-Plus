@@ -11,6 +11,8 @@
 #include <optional>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
+#include <algorithm>
 #include <string>
 #include <iostream>
 
@@ -175,7 +177,7 @@ bool statement() {
         if (consume("=")) expression(id.value());
         else consume(";");
         return true;
-    } else if (consume("reg")) {
+    } else if (consume("reg ")) {
         // reg varName;
         // reg varName = expression;
         // reg [x:y] varName;
@@ -309,6 +311,44 @@ void run() {
     end_or_fail();
 }
 
+std::unordered_set<std::string> vis;
+std::unordered_set<std::string> on_stack;
+std::vector<std::string> cycle;
+
+std::unordered_map<std::string, std::unordered_set<std::string>> in_edges;
+std::unordered_map<std::string, std::unordered_set<std::string>> out_edges;
+
+bool dfs(std::string str) {
+    vis.insert(str);
+    on_stack.insert(str);
+    for (std::string next : out_edges[str]) {
+		if (on_stack.find(next) != on_stack.end()) {
+			cycle.push_back(str);  // start cycle
+            on_stack.erase(str);
+            on_stack.erase(next);
+			return true;
+		} else if (vis.find(next) == vis.end()) {
+			if (dfs(next)) {  // continue cycle
+				if (on_stack.find(str) != on_stack.end()) {
+					cycle.push_back(str);
+					on_stack.erase(str);
+					return true;
+				} else {  // found u again
+					cycle.push_back(str);
+					return false;
+				}
+			}
+
+			if (!cycle.empty()) {
+				return false;  // finished with cycle
+			}
+		}
+	}
+    on_stack.erase(str);
+    return false;
+}
+
+
 int main(int argc, const char *const *const argv) {
     if (argc != 2) {
         fprintf(stderr,"usage: %s <file name>\n",argv[0]);
@@ -340,10 +380,43 @@ int main(int argc, const char *const *const argv) {
     }
 
     run();
+    std::cout << "VARIABLE NAME: DEPENDENCIES\n";
     for (auto pair : dependency_table) {
         std::cout << pair.first << ": ";
         for (auto dep : pair.second)
             std::cout << dep << " ";
         std::cout << std::endl;
     }
+    for (auto pair : is_wire) {
+        if (dependency_table.find(pair.first) == dependency_table.end()) {
+            std::cout << pair.first << ": \n";
+        }
+    }
+
+
+
+    for (auto pair : dependency_table) {
+        //we only need to check pairs of wires, assuming registers are updated per cycle and not continuously.
+        if (!is_wire[pair.first]) continue;
+        for (auto p2 : pair.second) {
+            if (!is_wire[p2]) continue;
+            in_edges[pair.first].insert(p2);
+            out_edges[p2].insert(pair.first);
+        }
+    }
+    
+    for (auto pair : in_edges) {
+        if (!cycle.empty()) break;
+        dfs(pair.first);
+    }
+
+    if (!cycle.empty()) {
+        std::cout << "CIRCULAR DEPENDENCY" << std::endl;
+		reverse(cycle.begin(), cycle.end());
+		for (std::string str : cycle) {
+            std::cout << str << " ";
+        }
+		std::cout << cycle[0] << std::endl;
+	}
+
 }

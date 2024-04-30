@@ -1,0 +1,151 @@
+1,150d0
+< VARIABLE NAME: DEPENDENCIES
+< z: b y x a 
+< x: b y 
+< reg_pc_or_changed: pc forward_va_exec1 is_mis_store is_mis_load 
+< is_jump_wb_3: is_jump_wb_2 
+< is_jump_wb_2: is_jump_wb 
+< hijack_or_reg: forward_va_exec1 is_mis_store is_mis_load pc is_jump_wb 
+< pc_wb: pc_exec2 
+< is_mis_store_then_mis_load_calc: va va_exec2 wb_0 is_mis_load is_mis_store_exec2 
+< is_mis_load: e_1 is_load_dec forward_va_exec1 
+< forward_va_exec1: res_wb wb_0 rt_exec2 res_exec2 e_2 halt w_reg_en_exec1 is_load_exec1 rt_exec1 va w_reg_en_exec2 ra_dec 
+< misaligned_instr: instruction mem_rdata1 pc is_jump_wb_3 mem_rdata0 
+< is_zero_calc: rb is_jump_calc 
+< vb_or_vt_calc: read_data_2 
+< rb_or_rt_dec: read_addr_2 rb_or_rt_dec is_stall 
+< res_wb: res_reg_exec2 mem_rdata1 mis_load_val is_mis_load_exec2 is_frwd_mem_exec2 mem_overload_exec2 is_load_exec2 
+< is_load_exec1: is_load_dec 
+< imm_val_dec: imm_val_calc imm_val_dec is_stall 
+< imm_val_exec1: imm_val_dec 
+< is_lZero_exec2: is_lZero_exec1 is_mis_store_exec2 
+< is_geZero_dec: is_geZero_calc is_geZero_dec is_stall 
+< halt_dec: halt_calc halt_dec is_stall 
+< is_jump_wb: wb_0 is_jumping 
+< is_lZero_dec: is_lZero_calc is_lZero_dec is_stall 
+< is_zero_dec: is_zero_calc is_zero_dec is_stall 
+< is_nZero_dec: is_nZero_calc is_nZero_dec is_stall 
+< movh_res: imm_val_exec1 vb_or_vt_wire_exec1 
+< is_store_calc: rb is_loadStore_calc 
+< is_sub_dec: is_sub_calc is_sub_dec is_stall 
+< w_reg_en_dec: w_reg_en_calc w_reg_en_dec is_stall 
+< is_mis_st_aft_st_bottom_exec2: is_mis_st_aft_st_bottom 
+< is_mis_load_exec2: is_mis_load_exec1 is_mis_store_exec2 
+< instruction: mem_rdata0 instruction is_stall 
+< is_lZero_calc: rb is_jump_calc 
+< is_zero_exec2: is_zero_exec1 is_mis_store_exec2 
+< is_load_dec: is_load_calc is_load_dec is_stall 
+< ra_exec2: ra_exec1 is_mis_store_exec2 
+< pc_fetch2: pc pc_fetch2 is_stall 
+< true_instr: mem_rdata0 misaligned_instr pc buffer_dec was_stall2 was_stall 
+< rt: true_instr 
+< upper_mis_st_val: vb_or_vt_exec2 mem_rdata0 delay_vb_or_vt is_mis_st_aft_st_upper_exec2 
+< vb_or_vt_exec1: vb_or_vt_calc res_wb w_reg_en_exec2 res_exec2 e_2 halt w_reg_en_exec1 is_load_exec1 rt_exec1 wb_0 rt_exec2 rb_or_rt_dec 
+< is_movh_dec: is_movh_calc is_movh_dec is_stall 
+< buffer_dec: buffer_dec mem_rdata0 was_stall true_instr is_stall 
+< is_jump_dec: is_jump_calc is_jump_dec is_stall 
+< va_exec1: forward_va_exec1 
+< wb_0: e_2 wb_0 is_flushing 
+< rb_or_rt_exec1: rb_or_rt_dec 
+< opcode_dec: opcode_dec opcode is_stall 
+< is_store_dec: is_store_calc is_store_dec is_stall 
+< is_jump_exec1: is_jump_dec 
+< d_0: f_2 d_0 is_stall wb_0 is_flushing 
+< pc_dec: pc_fetch2 pc_dec is_stall 
+< is_nZero_exec1: is_nZero_dec 
+< w_mem_en_dec: is_store_calc w_mem_en_dec is_stall 
+< e_2: e_1 wb_0 is_flushing 
+< is_movh_calc: opcode 
+< mis_store_then_mis_load_val_exec1: vb_or_vt_exec2 
+< f_2: f_1 f_2 is_stall wb_0 is_flushing 
+< was_stall2: was_stall 
+< is_geZero_calc: rb is_jump_calc 
+< is_stall: is_mis_store is_mis_load is_load_calc rt_dec is_load_dec e_1 ra d_0 
+< is_movl_calc: opcode 
+< halt_exec1: halt_dec 
+< read_addr_2: rt rb opcode 
+< delay_vb_or_vt: mis_st_val_or_norm 
+< opcode: true_instr 
+< bottom_mis_st_val: mem_rdata1 delay_vb_or_vt is_mis_st_aft_st_bottom_exec2 vb_or_vt_exec2 
+< is_mis_store_exec1: is_mis_store 
+< halt_calc: is_geZero_calc is_store_calc is_lZero_calc is_nZero_calc is_zero_calc is_movh_calc is_movl_calc is_load_calc is_sub_calc 
+< is_mis_store: e_1 is_mis_store_exec1 forward_va_exec1 is_store_dec 
+< do_nothing: is_jumping_wire correct_instr pc_exec1 pc_exec2 was_stall2 
+< is_sub_calc: opcode 
+< is_nZero_calc: rb is_jump_calc 
+< ra: true_instr 
+< is_nZero_exec2: is_nZero_exec1 is_mis_store_exec2 
+< e_1: d_0 is_mis_store is_stall wb_0 is_flushing 
+< is_jump_calc: opcode 
+< is_loadStore_calc: opcode 
+< w_reg_en_calc: is_movh_calc is_movl_calc is_load_calc is_sub_calc 
+< mis_st_val_or_norm: vb_or_vt_exec2 bottom_mis_st_val is_mis_store_exec2 
+< w_mem_en_calc: is_store_calc 
+< is_load_calc: rb is_loadStore_calc 
+< rt_dec: rt rt_dec is_stall 
+< is_store_exec1: is_store_dec 
+< imm_val_calc: true_instr 
+< res_exec2: movh_res movl_res is_movl_exec1 sub_res is_sub_exec1 
+< is_mis_store_exec2: is_mis_store_exec1 is_mis_store_exec2 
+< is_mis_load_exec1: is_mis_load 
+< was_stall: is_stall 
+< w_mem_en_exec1: w_mem_en_dec 
+< is_sub_exec1: is_sub_dec 
+< is_zero_exec1: is_zero_dec 
+< vb_or_vt_wire_exec1: res_wb halt w_reg_en_exec2 vb_or_vt_exec1 wb_0 rt_exec2 rb_or_rt_exec1 
+< is_geZero_exec1: is_geZero_dec 
+< is_movl_dec: is_movl_calc is_movl_dec is_stall 
+< ra_exec1: ra_dec 
+< rt_exec1: rt_dec 
+< w_reg_en_exec1: w_reg_en_dec 
+< is_mis_st_aft_st_bottom: va_wire_exec1 is_mis_store_exec1 is_mis_store_exec2 is_store_exec2 va_exec2 wb_0 
+< is_movh_exec1: is_movh_dec 
+< is_mis_st_aft_st_upper: va_wire_exec1 is_mis_store_exec1 is_mis_store_exec2 is_store_exec2 va_exec2 wb_0 
+< va_wire_exec1: va_exec1 res_wb halt w_reg_en_exec2 wb_0 rt_exec2 ra_exec1 
+< sub_res: vb_or_vt_wire_exec1 va_wire_exec1 
+< is_geZero_exec2: is_geZero_exec1 is_mis_store_exec2 
+< is_jumping_wire: is_geZero_exec1 is_lZero_exec1 is_nZero_exec1 is_jump_exec1 is_zero_exec1 
+< is_flushing_wire: pc va_wire_exec1 is_store_exec1 e_2 is_mis_store_exec2 do_nothing 
+< correct_instr: pc_exec2 vb_or_vt_wire_exec1 is_jumping_wire 
+< is_jumping: is_jumping_wire is_mis_store_exec2 
+< opcode_reg_exec1: opcode_dec 
+< is_jump_exec2: is_jump_exec1 is_mis_store_exec2 
+< is_load_exec2: is_load_exec1 is_mis_store_exec2 
+< y: a x 
+< is_mis_st_aft_st_upper_exec2: is_mis_st_aft_st_upper 
+< res_reg_exec2: res_exec2 is_mis_store_exec2 
+< mis_load_val: mem_rdata1 is_frwd_mem_mis2_exec2 mem_rdata0 mem_overload_exec2 is_frwd_mem_mis1_exec2 
+< movl_res: imm_val_exec1 
+< is_store_exec2: is_store_exec1 is_mis_store_exec2 
+< rt_exec2: rt_exec1 is_mis_store_exec2 
+< w_mem_en_exec2: w_mem_en_exec1 is_mis_store_exec2 
+< w_reg_en_exec2: w_reg_en_exec1 is_mis_store_exec2 
+< rb: true_instr 
+< halt_exec2: halt_exec1 is_mis_store_exec2 
+< va_exec2: va_wire_exec1 va_exec2 is_mis_store_exec2 
+< ra_dec: ra ra_dec is_stall 
+< vb_or_vt_exec2: vb_or_vt_wire_exec1 upper_mis_st_val is_mis_store_exec2 
+< is_movl_exec1: is_movl_dec 
+< is_frwd_mem_exec2: wb_0 va_exec2 halt va_wire_exec1 is_mis_store_then_mis_load_exec1 w_mem_en_exec2 is_mis_store_exec2 
+< is_frwd_mem_mis2_exec2: wb_0 va_exec2 halt va_wire_exec1 w_mem_en_exec2 is_mis_store_exec2 
+< pc_exec1: pc_dec 
+< is_mis_store_then_mis_load_exec1: is_mis_store_then_mis_load_calc 
+< correct_instr_reg: correct_instr 
+< pc: pc is_stall is_flushing correct_instr_reg wb_0 f_1 do_nothing_reg reg Registers bp_out pc_exec2 Shift 
+< mem_overload_exec2: vb_or_vt_exec2 is_mis_load_exec1 wb_0 va_exec2 halt va_wire_exec1 mis_store_then_mis_load_val_exec1 is_mis_store_then_mis_load_exec1 w_mem_en_exec2 is_mis_store_exec2 
+< pc_exec2: pc_exec1 pc_exec2 is_mis_store_exec2 
+< is_flushing: is_flushing_wire 
+< is_lZero_exec1: is_lZero_dec 
+< is_frwd_mem_mis1_exec2: wb_0 va_exec2 halt va_wire_exec1 w_mem_en_exec2 is_mis_store_exec2 
+< do_nothing_reg: do_nothing 
+< bp_out: 
+< a: 
+< halt: 
+< b: 
+< read_data_2: 
+< va: 
+< mem_rdata0: 
+< clk: 
+< mem_rdata1: 
+< CIRCULAR DEPENDENCY
+< y x y
