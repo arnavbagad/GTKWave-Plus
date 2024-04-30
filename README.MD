@@ -11,7 +11,7 @@ GTKWave-Plus allows users to detect circular and linear dependencies while visua
 
 ## Getting Started
 
-1. **Prerequisites**: Make sure you have Java and Python installed on your system.
+1. **Prerequisites**: Make sure you have Java and Python installed on your system. The MakeFile currently only runs on the lab machines and the Python Libraries require Python 3.11.
    
 2. **Clone the Repository**: Clone this repository to your local machine using the following command:
     ```
