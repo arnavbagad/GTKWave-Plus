@@ -15,7 +15,7 @@ GTKWave-Plus allows users to detect circular and linear dependencies while visua
    
 2. **Clone the Repository**: Clone this repository to your local machine using the following command:
     ```
-    git clone <repository_url>
+    git clone https://github.com/arnavbagad/GTKWave-Plus
     ```
 3. **Install Required Python Libraries:**
     ```
